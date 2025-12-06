@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Family–Business Control Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Icons (Remix Icon) -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: #020617;
+      --bg-soft: #0b1220;
+      --bg-soft-alt: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.1);
+      --accent-strong: #0ea5e9;
+      --danger: #f97373;
+      --danger-soft: rgba(248, 113, 113, 0.15);
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --text-muted: #6b7280;
+      --border-soft: rgba(148, 163, 184, 0.25);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 14px 40px rgba(15, 23, 42, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 45%, #020617 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      color: var(--text-main);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.98));
+      border-right: 1px solid rgba(148, 163, 184, 0.2);
+      padding: 18px 18px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: sticky;
+      top: 0;
+      max-height: 100vh;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 10px 4px;
+    }
+
+    .logo-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, #38bdf8 0, #0ea5e9 30%, #1d4ed8 70%, #020617 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e5f2ff;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35), 0 14px 28px rgba(15, 23, 42, 0.85);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .sidebar-section-title {
+      margin: 4px 6px 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .nav-item {
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      font-size: 13px;
+      color: var(--text-soft);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.17s ease-out;
+    }
+
+    .nav-item i {
+      font-size: 17px;
+    }
+
+    .nav-item span {
+      flex: 1;
+    }
+
+    .nav-item small {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .nav-item:hover {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.45);
+      color: #e5e7eb;
+      transform: translateY(-0.5px);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.02));
+      border-color: rgba(56, 189, 248, 0.7);
+      color: var(--accent);
+      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.95);
+    }
+
+    .nav-item.active i {
+      color: var(--accent-strong);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      border-radius: 18px;
+      padding: 10px 11px;
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.08), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.95);
+    }
+
+    .sidebar-footer-title {
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    .sidebar-footer-text {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      padding: 5px 9px;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.8);
+      cursor: pointer;
+      transition: all 0.15s ease-out;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(56, 189, 248, 0.14);
+      color: #e5f2ff;
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      padding: 18px 22px 22px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .topbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .page-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pill {
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 11px;
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill i {
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0b1120;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 15px 40px rgba(56, 189, 248, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .btn-primary i {
+      font-size: 15px;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.03);
+      transform: translateY(-0.5px);
+    }
+
+    /* SECTIONS */
+    .section {
+      display: none;
+      animation: fadeIn 0.26s ease-out;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+      .app {
+        flex-direction: column;
+      }
+      .main {
+        padding: 14px 14px 18px;
+      }
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .topbar-right {
+        align-self: stretch;
+        justify-content: space-between;
+      }
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.85), rgba(2, 6, 23, 0.98));
+      border: 1px solid var(--border-soft);
+      padding: 14px 14px 12px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      color: var(--text-muted);
+    }
+
+    .value-main {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .value-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .trend.up {
+      color: #4ade80;
+    }
+
+    .trend.down {
+      color: var(--danger);
+    }
+
+    .pill-soft {
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+    }
+
+    .pill-danger {
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid rgba(248, 113, 113, 0.55);
+    }
+
+    /* TABLES */
+    .table-wrapper {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(31, 41, 55, 0.8);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 1));
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    thead {
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    th,
+    td {
+      padding: 7px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.9);
+    }
+
+    th {
+      font-weight: 500;
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    tbody tr:hover {
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge.success {
+      background: rgba(34, 197, 94, 0.1);
+      color: #4ade80;
+      border: 1px solid rgba(22, 163, 74, 0.5);
+    }
+
+    .badge.warning {
+      background: rgba(250, 204, 21, 0.1);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.5);
+    }
+
+    .badge.info {
+      background: rgba(59, 130, 246, 0.08);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.6);
+    }
+
+    .badge.danger {
+      background: rgba(248, 113, 113, 0.12);
+      color: #fca5a5;
+      border: 1px solid rgba(248, 113, 113, 0.6);
+    }
+
+    .tag {
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-muted);
+    }
+
+    /* TIMELINE */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 10px;
+    }
+
+    .timeline-dot {
+      width: 10px;
+      margin-top: 4px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .timeline-dot-inner {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.22);
+    }
+
+    .timeline-body {
+      flex: 1;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(51, 65, 85, 0.8);
+    }
+
+    .timeline-title {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .timeline-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .timeline-label {
+      font-size: 10px;
+      color: var(--accent);
+      margin-top: 4px;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .flex-between {
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .gap-8 {
+      gap: 8px;
+    }
+
+    .mt-8 {
+      margin-top: 8px;
+    }
+
+    .mt-4 {
+      margin-top: 4px;
+    }
+
+    .muted {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .scroll-y-soft {
+      max-height: 280px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.6) transparent;
+    }
+
+    .scroll-y-soft::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .scroll-y-soft::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .scroll-y-soft::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.6);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-circle">FC</div>
+        <div class="brand">
+          <div class="brand-title">Family Control Room</div>
+          <div class="brand-sub">One screen for your entire empire</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">Navigation</div>
+      <nav class="nav">
+        <div class="nav-item active" data-section="overview">
+          <i class="ri-dashboard-2-line"></i>
+          <span>Overview</span>
+          <small>Summary</small>
+        </div>
+        <div class="nav-item" data-section="family">
+          <i class="ri-group-line"></i>
+          <span>Family</span>
+          <small>Roles & control</small>
+        </div>
+        <div class="nav-item" data-section="assets">
+          <i class="ri-building-4-line"></i>
+          <span>Assets</span>
+          <small>Properties & business</small>
+        </div>
+        <div class="nav-item" data-section="money">
+          <i class="ri-exchange-dollar-line"></i>
+          <span>Money Flow</span>
+          <small>Internal movements</small>
+        </div>
+        <div class="nav-item" data-section="documents">
+          <i class="ri-file-shield-line"></i>
+          <span>Documents</span>
+          <small>Vault</small>
+        </div>
+        <div class="nav-item" data-section="reminders">
+          <i class="ri-time-line"></i>
+          <span>Risks & Reminders</span>
+          <small>Future safety</small>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-title">Privacy-first</div>
+        <div class="sidebar-footer-text">
+          This demo runs fully in your browser with sample data. In production, you’ll connect it to a secure backend.
+        </div>
+        <button class="btn-ghost">
+          <i class="ri-shield-keyhole-line"></i>
+          View security checklist
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">Mehta Family – Control Room</h1>
+          <p class="page-sub">Calm, private overview of family, assets, money and risk.</p>
+        </div>
+        <div class="topbar-right">
+          <div class="pill">
+            <i class="ri-shield-check-line"></i>
+            Read-only demo mode
+          </div>
+          <button class="btn-primary">
+            <i class="ri-add-line"></i>
+            Add new record
+          </button>
+        </div>
+      </header>
+
+      <!-- OVERVIEW -->
+      <section id="section-overview" class="section active">
+        <div class="grid grid-3">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-bank-line"></i>
+                Net worth snapshot
+              </div>
+              <div class="chip">Private view</div>
+            </div>
+            <div class="value-main">₹ 24.3 Cr</div>
+            <div class="value-sub">Across properties, businesses, cash & gold</div>
+            <div class="trend up">
+              <i class="ri-arrow-up-s-line"></i>
+              +₹ 1.8 Cr vs last year
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-building-2-line"></i>
+                Income vs non-income assets
+              </div>
+              <div class="chip">Allocation</div>
+            </div>
+            <canvas id="assetChart" height="120"></canvas>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-alert-line"></i>
+                Open risks
+              </div>
+              <div class="chip">3 active</div>
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot">
+                  <div class="timeline-dot-inner"></div>
+                </div>
+                <div class="timeline-body">
+                  <div class="timeline-title">
+                    Single signatory for 3 properties
+                  </div>
+                  <div class="timeline-meta">
+                    Suggested: add secondary controller to avoid lock-in.
+                  </div>
+                  <div class="timeline-label">Ownership • Medium risk</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot">
+                  <div class="timeline-dot-inner" style="background:#f97373;box-shadow:0 0 0 4px rgba(248,113,113,0.25);"></div>
+                </div>
+                <div class="timeline-body">
+                  <div class="timeline-title">
+                    Term insurance expiring in 45 days
+                  </div>
+                  <div class="timeline-meta">
+                    Amit’s cover of ₹1.5 Cr expires soon. Renewal pending.
+                  </div>
+                  <div class="timeline-label" style="color:#fca5a5;">Insurance • High urgency</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot">
+                  <div class="timeline-dot-inner" style="background:#facc15;box-shadow:0 0 0 4px rgba(250,204,21,0.25);"></div>
+                </div>
+                <div class="timeline-body">
+                  <div class="timeline-title">
+                    Informal loan to cousin – no written terms
+                  </div>
+                  <div class="timeline-meta">
+                    ₹18L outstanding; due date and terms not documented.
+                  </div>
+                  <div class="timeline-label" style="color:#facc15;">Udhaar • Clarify on paper</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:14px;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-group-line"></i>
+                Decision makers & dependents
+              </div>
+              <div class="chip">Family structure</div>
+            </div>
+            <div class="table-wrapper scroll-y-soft">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Person</th>
+                    <th>Role</th>
+                    <th>Controls</th>
+                    <th>Dependents</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Rakesh Mehta</td>
+                    <td><span class="badge success"><i class="ri-vip-crown-line"></i> Patriarch</span></td>
+                    <td>Primary signatory for 5 assets</td>
+                    <td>3</td>
+                  </tr>
+                  <tr>
+                    <td>Neha Mehta</td>
+                    <td><span class="badge info"><i class="ri-shield-user-line"></i> Co-controller</span></td>
+                    <td>Apartment, Liquid funds</td>
+                    <td>2</td>
+                  </tr>
+                  <tr>
+                    <td>Amit Mehta</td>
+                    <td><span class="badge info">Business operator</span></td>
+                    <td>Retail store, Online brand</td>
+                    <td>1</td>
+                  </tr>
+                  <tr>
+                    <td>Priya Mehta</td>
+                    <td><span class="badge warning">Dependent</span></td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>Household staff</td>
+                    <td><span class="badge danger">Operational</span></td>
+                    <td>Cash expenses, Assets access</td>
+                    <td>-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-time-line"></i>
+                This month at a glance
+              </div>
+              <div class="chip">Next 30 days</div>
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot">
+                  <div class="timeline-dot-inner"></div>
+                </div>
+                <div class="timeline-body">
+                  <div class="timeline-title">Property tax for Vile Parle shop</div>
+                  <div class="timeline-meta">Due in 9 days • Attach paid challan to close reminder.</div>
+                  <div class="timeline-label">Compliance</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot">
+                  <div class="timeline-dot-inner" style="background:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,0.25);"></div>
+                </div>
+                <div class="timeline-body">
+                  <div class="timeline-title">Rent inflow – 3 residential tenants</div>
+                  <div class="timeline-meta">Expected by 7th • Auto reminders scheduled.</div>
+                  <div class="timeline-label" style="color:#4ade80;">Cash flow</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot">
+                  <div class="timeline-dot-inner" style="background:#f97373;box-shadow:0 0 0 4px rgba(248,113,113,0.25);"></div>
+                </div>
+                <div class="timeline-body">
+                  <div class="timeline-title">Insurance review meeting</div>
+                  <div class="timeline-meta">Review coverage vs assets with advisor, block 45 min.</div>
+                  <div class="timeline-label" style="color:#fca5a5;">Protection</div>
+                </div>
+              </div>
+            </div>
+            <p class="muted mt-8">
+              In the full version, this area connects to live data and sends WhatsApp/email nudges.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAMILY -->
+      <section id="section-family" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-group-2-line"></i>
+              Family map & roles
+            </div>
+            <div class="chip">Human, not just numbers</div>
+          </div>
+          <p class="muted">
+            This view helps the family see who carries which responsibility today, and where backups are missing.
+          </p>
+          <div class="grid grid-2" style="margin-top:12px;">
+            <div>
+              <div class="table-wrapper scroll-y-soft">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Relation</th>
+                      <th>Role</th>
+                      <th>Risk</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Rakesh Mehta</td>
+                      <td>Father</td>
+                      <td><span class="badge success">Final decision-maker</span></td>
+                      <td><span class="tag">Single point of failure</span></td>
+                    </tr>
+                    <tr>
+                      <td>Neha Mehta</td>
+                      <td>Mother</td>
+                      <td><span class="badge info">Co-controller</span></td>
+                      <td><span class="tag">Needs access to all docs</span></td>
+                    </tr>
+                    <tr>
+                      <td>Amit Mehta</td>
+                      <td>Son</td>
+                      <td><span class="badge info">Business lead</span></td>
+                      <td><span class="tag">Key-man risk</span></td>
+                    </tr>
+                    <tr>
+                      <td>Priya Mehta</td>
+                      <td>Daughter</td>
+                      <td><span class="badge warning">Dependent</span></td>
+                      <td><span class="tag">Add nominee status</span></td>
+                    </tr>
+                    <tr>
+                      <td>CA Shah</td>
+                      <td>Advisor</td>
+                      <td><span class="badge">External advisor</span></td>
+                      <td><span class="tag">View-only access</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <div class="card" style="background: radial-gradient(circle at top left, rgba(56,189,248,0.12), rgba(15,23,42,0.98)); border-color:rgba(56,189,248,0.45);">
+                <div class="card-header">
+                  <div class="card-title">
+                    <i class="ri-shield-user-line"></i>
+                    Insights & suggestions
+                  </div>
+                </div>
+                <ul style="font-size:12px; color:var(--text-soft); display:flex; flex-direction:column; gap:6px; padding-left:16px; margin-top:6px;">
+                  <li>Document at least one secondary controller for each major property.</li>
+                  <li>Ensure spouse has access to insurance, wills and emergency contacts.</li>
+                  <li>Make dependents nominees where appropriate; track it in this control room.</li>
+                  <li>Give advisors limited, read-only access instead of sharing files on WhatsApp.</li>
+                </ul>
+                <p class="muted mt-8">
+                  In a real deployment, this panel can be rule-driven and tailored to each family.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASSETS -->
+      <section id="section-assets" class="section">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-building-4-line"></i>
+                Asset overview
+              </div>
+              <div class="chip">7 tracked assets</div>
+            </div>
+            <div class="table-wrapper scroll-y-soft">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Asset</th>
+                    <th>Type</th>
+                    <th>Controller</th>
+                    <th>Value</th>
+                    <th>Income</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Vile Parle retail shop</td>
+                    <td><span class="badge info">Commercial</span></td>
+                    <td>Rakesh</td>
+                    <td>₹ 6.8 Cr</td>
+                    <td><span class="badge success">Rent – active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Andheri apartment</td>
+                    <td><span class="badge info">Residential</span></td>
+                    <td>Neha</td>
+                    <td>₹ 3.1 Cr</td>
+                    <td><span class="badge success">Rent – active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Wholesale textile godown</td>
+                    <td><span class="badge warning">Inventory-heavy</span></td>
+                    <td>Amit</td>
+                    <td>₹ 4.2 Cr</td>
+                    <td><span class="badge warning">Cash-flow sensitive</span></td>
+                  </tr>
+                  <tr>
+                    <td>Online D2C brand</td>
+                    <td><span class="badge info">Business</span></td>
+                    <td>Amit</td>
+                    <td>₹ 2.0 Cr</td>
+                    <td><span class="badge success">Growth phase</span></td>
+                  </tr>
+                  <tr>
+                    <td>Gold & jewellery</td>
+                    <td><span class="badge">Gold</span></td>
+                    <td>Neha</td>
+                    <td>₹ 1.3 Cr</td>
+                    <td><span class="badge">Non-income</span></td>
+                  </tr>
+                  <tr>
+                    <td>Mutual funds</td>
+                    <td><span class="badge info">Financial</span></td>
+                    <td>Neha</td>
+                    <td>₹ 4.0 Cr</td>
+                    <td><span class="badge success">SIP active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Cash & FDs</td>
+                    <td><span class="badge">Cash/FD</span></td>
+                    <td>Rakesh</td>
+                    <td>₹ 2.9 Cr</td>
+                    <td><span class="badge">Safety buffer</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-pie-chart-2-line"></i>
+                Allocation & concentration
+              </div>
+              <div class="chip">Comfort vs risk</div>
+            </div>
+            <p class="muted">
+              A quick sense of how concentrated the family is in property vs business vs liquid wealth.
+            </p>
+            <ul style="font-size:12px; color:var(--text-soft); margin-top:8px; display:flex; flex-direction:column; gap:6px;">
+              <li>~41% in property (2 units) – generally stable, but review tenant quality.</li>
+              <li>~25% in operating businesses – higher risk, but growth potential.</li>
+              <li>~21% in mutual funds – liquid, market-linked.</li>
+              <li>~13% in gold & cash – emergency + cultural comfort.</li>
+            </ul>
+            <div class="mt-8">
+              <span class="pill-soft"><i class="ri-lightbulb-flash-line"></i> Suggestion</span>
+              <p class="muted mt-4">
+                If >65% of net worth sits under one controller, the system can suggest adding backups and better documentation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MONEY FLOW -->
+      <section id="section-money" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-exchange-funds-line"></i>
+              Internal money movements & udhaar
+            </div>
+            <div class="chip">Open & cleared</div>
+          </div>
+          <p class="muted">
+            This is not accounting – it’s a memory-proof record of promises, loans and internal flows that usually live only in people’s heads.
+          </p>
+          <div class="table-wrapper scroll-y-soft" style="margin-top:10px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>From → To</th>
+                  <th>Reason</th>
+                  <th>Amount</th>
+                  <th>Due / status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Business (Textile) → Family</td>
+                  <td>Monthly household budget</td>
+                  <td>₹ 2.5 L</td>
+                  <td><span class="badge success">Standing, on track</span></td>
+                </tr>
+                <tr>
+                  <td>Family → Cousin (Rahul)</td>
+                  <td>Informal loan for shop setup</td>
+                  <td>₹ 18 L</td>
+                  <td><span class="badge danger">No written terms</span></td>
+                </tr>
+                <tr>
+                  <td>Rakesh → Amit</td>
+                  <td>Seed for D2C brand</td>
+                  <td>₹ 35 L</td>
+                  <td><span class="badge info">Convertible to equity</span></td>
+                </tr>
+                <tr>
+                  <td>Neha → Jewellery shop</td>
+                  <td>Gold purchase (wedding)</td>
+                  <td>₹ 9 L</td>
+                  <td><span class="badge warning">Plan repayment / allocation</span></td>
+                </tr>
+                <tr>
+                  <td>Business → CA Shah</td>
+                  <td>Retainer fees (quarter)</td>
+                  <td>₹ 1.2 L</td>
+                  <td><span class="badge success">Paid, receipts uploaded</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCUMENTS -->
+      <section id="section-documents" class="section">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-file-shield-2-line"></i>
+                Critical documents vault
+              </div>
+              <div class="chip">Sample entries</div>
+            </div>
+            <div class="table-wrapper scroll-y-soft">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Document</th>
+                    <th>Linked asset/person</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Sale deed – Vile Parle shop</td>
+                    <td>Commercial property</td>
+                    <td><span class="badge success">Uploaded</span></td>
+                  </tr>
+                  <tr>
+                    <td>Registered Will – Rakesh</td>
+                    <td>Family wide</td>
+                    <td><span class="badge info">Needs review in 2026</span></td>
+                  </tr>
+                  <tr>
+                    <td>Insurance policy – Amit term cover</td>
+                    <td>Amit</td>
+                    <td><span class="badge danger">Expiry in 45 days</span></td>
+                  </tr>
+                  <tr>
+                    <td>Partnership deed – Textile business</td>
+                    <td>Business</td>
+                    <td><span class="badge success">Uploaded</span></td>
+                  </tr>
+                  <tr>
+                    <td>Flat agreement – Andheri apartment</td>
+                    <td>Residential property</td>
+                    <td><span class="badge success">Uploaded</span></td>
+                  </tr>
+                  <tr>
+                    <td>Staff NDA – Driver & maid</td>
+                    <td>Household staff</td>
+                    <td><span class="badge warning">Draft only</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="ri-lock-2-line"></i>
+                Access & safety notes
+              </div>
+              <div class="chip">Principles</div>
+            </div>
+            <ul style="font-size:12px; color:var(--text-soft); display:flex; flex-direction:column; gap:6px; margin-top:6px; padding-left:16px;">
+              <li>Owner chooses which family members and advisors can view which documents.</li>
+              <li>In production, all files should be encrypted at rest and in transit, with location in India.</li>
+              <li>Emergency access rules (e.g., unlock certain docs only if both spouse + child approve).</li>
+              <li>Activity log to see who accessed / downloaded which document.</li>
+            </ul>
+            <p class="muted mt-8">
+              For now, this demo shows the layout. Later you’ll connect this to actual secure storage.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- REMINDERS -->
+      <section id="section-reminders" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="ri-time-line"></i>
+              Upcoming risks & reminders
+            </div>
+            <div class="chip">30–90 day horizon</div>
+          </div>
+          <div class="grid grid-2">
+            <div>
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-dot">
+                    <div class="timeline-dot-inner"></div>
+                  </div>
+                  <div class="timeline-body">
+                    <div class="timeline-title">GST annual return filing window</div>
+                    <div class="timeline-meta">Coordinate with CA; upload filed acknowledgement here.</div>
+                    <div class="timeline-label">Business compliance</div>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot">
+                    <div class="timeline-dot-inner" style="background:#f97373;box-shadow:0 0 0 4px rgba(248,113,113,0.25);"></div>
+                  </div>
+                  <div class="timeline-body">
+                    <div class="timeline-title">Term insurance expiry – Amit</div>
+                    <div class="timeline-meta">Schedule review meeting before policy lapses.</div>
+                    <div class="timeline-label" style="color:#fca5a5;">Protection</div>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot">
+                    <div class="timeline-dot-inner" style="background:#facc15;box-shadow:0 0 0 4px rgba(250,204,21,0.25);"></div>
+                  </div>
+                  <div class="timeline-body">
+                    <div class="timeline-title">FD maturity – emergency buffer</div>
+                    <div class="timeline-meta">Decide: renew, shift to debt fund, or use for loan repayment.</div>
+                    <div class="timeline-label" style="color:#facc15;">Cash planning</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p class="muted">
+                In the full product, reminders can be sent via:
+              </p>
+              <ul style="font-size:12px; color:var(--text-soft); margin-top:6px; padding-left:16px; display:flex; flex-direction:column; gap:4px;">
+                <li>WhatsApp messages to key family members</li>
+                <li>Email summaries every week / month</li>
+                <li>Optional notification to CA or advisor</li>
+              </ul>
+              <div class="mt-8">
+                <span class="pill-soft"><i class="ri-barricade-line"></i> Philosophy</span>
+                <p class="muted mt-4">
+                  The goal is not to spam the family with alerts, but to highlight only what can genuinely hurt them if ignored.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Sidebar navigation switching
+    const navItems = document.querySelectorAll(".nav-item");
+    const sections = document.querySelectorAll(".section");
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const target = item.getAttribute("data-section");
+
+        navItems.forEach((n) => n.classList.remove("active"));
+        item.classList.add("active");
+
+        sections.forEach((sec) => {
+          if (sec.id === "section-" + target) {
+            sec.classList.add("active");
+          } else {
+            sec.classList.remove("active");
+          }
+        });
+      });
+    });
+
+    // Asset chart (Overview)
+    const ctx = document.getElementById("assetChart");
+    if (ctx && window.Chart) {
+      // Dummy data: property, business, financial, gold/cash
+      const data = {
+        labels: ["Property", "Business", "Financial", "Gold & Cash"],
+        datasets: [
+          {
+            data: [41, 25, 21, 13],
+            backgroundColor: [
+              "rgba(59, 130, 246, 0.75)",
+              "rgba(56, 189, 248, 0.75)",
+              "rgba(16, 185, 129, 0.8)",
+              "rgba(251, 191, 36, 0.9)"
+            ],
+            borderColor: [
+              "rgba(59, 130, 246, 1)",
+              "rgba(56, 189, 248, 1)",
+              "rgba(16, 185, 129, 1)",
+              "rgba(251, 191, 36, 1)"
+            ],
+            borderWidth: 1.5,
+            hoverOffset: 5
+          }
+        ]
+      };
+
+      new Chart(ctx, {
+        type: "doughnut",
+        data,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                color: "#9ca3af",
+                font: {
+                  size: 10
+                },
+                boxWidth: 10
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => {
+                  const label = context.label || "";
+                  const value = context.parsed;
+                  return `${label}: ${value}%`;
+                }
+              }
+            }
+          },
+          cutout: "62%"
+        }
+      });
+    }
+  </script>
+</body>
+</html>
